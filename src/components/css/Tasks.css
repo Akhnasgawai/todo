@@ -1,0 +1,40 @@
+@import "./Variable.css";
+
+.listContainer {
+	height: 300px;
+	overflow-y: scroll;
+	/* margin: var(--main-margin); */
+}
+
+.list {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid var(--task-color);
+	color: var(--secondary-color);
+	padding: var(--main-padding);
+}
+
+.listItems {
+	display: flex;
+	align-items: center;
+}
+
+.listItems input {
+	transform: scale(1.1);
+	margin-right: 10px;
+}
+
+.listItems p {
+	margin: 12px 0;
+	font-size: 14px;
+}
+
+.options {
+	color: var(--secondary-color);
+	border: 1px solid red;
+}
+
+.strike {
+	text-decoration: line-through;
+}
