@@ -14,6 +14,7 @@ const Tasks = () => {
 	const month = moment().format("MMMM");
 	const [task, setTask] = useState("");
 	const [tasks, getTasks] = useState([]);
+	const [updateStatus, setUpdateStatus] = useState([]);
 	const [activeLink, setActiveLink] = useState("all");
 	const [count, setCount] = useState(0);
 
@@ -24,20 +25,29 @@ const Tasks = () => {
 	// adding the todo task to database
 	const addTask = (event) => {
 		setActiveLink("all");
-		event.preventDefault();
 		const data = {
 			content: task,
 			completed: false,
 		};
+		let url = "http://127.0.0.1:8000/addTodo/";
+		console.log(updateStatus.length);
+		console.log(updateStatus !== []);
+		if (updateStatus.length !== 0) {
+			url += `${updateStatus["id"]}/`;
+		}
+		console.log(url);
 		axios
-			.post("http://127.0.0.1:8000/addTodo/", data)
+			.post(url, data)
 			.then((response) => {
-				console.log(response.data);
-				console.log(response.data);
+				console.log(response.status);
+				if (response.status === 201) {
+					setUpdateStatus([]);
+				}
 			})
 			.catch((error) => {
 				console.log(error.response.data.content[0]);
 			});
+		console.log(tasks);
 		setTask("");
 		fetchData(activeLink);
 	};
@@ -76,17 +86,34 @@ const Tasks = () => {
 	};
 
 	// clears all the task from the db
-	const deleteTask = () => {
+	const deleteTask = (e, pk) => {
+		let url = "http://127.0.0.1:8000/delete/";
+		if (pk !== undefined && pk !== null) {
+			console.log("ENTERED");
+			url += `${pk}/`;
+		}
 		axios
-			.delete("http://127.0.0.1:8000/delete/")
+			.delete(url)
 			.then((response) => {
 				console.log(response.data);
-				getTasks([]);
+				console.log(response.status);
+				if (response.status === 200) {
+					getTasks([]);
+				} else {
+					const updatedState = tasks.filter((obj) => obj.id !== pk);
+					getTasks(updatedState);
+				}
 			})
 			.catch((error) => {
 				console.log(error);
 			});
 		setCount(0);
+	};
+
+	const editTask = (e, pk, index) => {
+		let content = tasks[index]["content"];
+		setTask(content);
+		setUpdateStatus({ status: "true", id: pk });
 	};
 
 	useEffect(() => {
@@ -158,8 +185,21 @@ const Tasks = () => {
 									{task.content}
 								</p>
 							</div>
+							<div></div>
 							<div className="options">
-								<i className="fa-solid fa-ellipsis"></i>
+								<div className="btn-container">
+									<i
+										onClick={(e) => deleteTask(e, task.id)}
+										className="fa-regular fa-trash-can"
+									></i>
+									<i
+										onClick={(e) =>
+											editTask(e, task.id, index)
+										}
+										class="fa-regular fa-pen-to-square"
+									></i>
+									<i className="fa-regular fa-eye"></i>
+								</div>
 							</div>
 						</div>
 					</>
@@ -176,7 +216,13 @@ const Tasks = () => {
 				</div>
 				<div onClick={addTask} className="taskAdd">
 					<button>
-						<i className="fa-regular fa-plus"></i>
+						<i
+							className={
+								updateStatus["status"]
+									? "fa-regular fa-pen-to-square"
+									: "fa-regular fa-plus"
+							}
+						></i>
 					</button>
 				</div>
 			</div>

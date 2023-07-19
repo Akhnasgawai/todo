@@ -1,7 +1,7 @@
-:root{
-    --primary-color: #0062CC;
-    --secondary-color: #a2a2a2; 
-    --main-padding: 6px 12px;
-    --task-color: #d8d8d8;
-    --card-background: #f9f9f9;
+:root {
+	--primary-color: #0062cc;
+	--secondary-color: #a2a2a2;
+	--main-padding: 6px 20px;
+	--task-color: #d8d8d8;
+	--card-background: #f9f9f9;
 }
